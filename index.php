@@ -1,5 +1,8 @@
 <?php
 
+// 设置显示模式：true 表示显示在页面上，false 表示写入文件
+$displayMode = false;
+
 $ip = $_SERVER['REMOTE_ADDR'];
 $timestamp = date('Y-m-d H:i:s');
 $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -35,6 +38,7 @@ $serverInfo = [
 
 $logfile = __DIR__ . '/cookie.txt';
 
+// 构建日志条目
 $logEntry = "[$timestamp]\n";
 $logEntry .= "IP地址: $ip\n";
 $logEntry .= "请求方法: $requestMethod\n";
@@ -68,8 +72,12 @@ foreach ($serverInfo as $key => $value) {
 
 $logEntry .= str_repeat("-", 50) . "\n\n";
 
-file_put_contents($logfile, $logEntry, FILE_APPEND | LOCK_EX);
-
 header('Content-Type: text/plain');
-echo "请求信息已记录到文件。";
+
+if ($displayMode) {
+    echo $logEntry;
+} else {
+    file_put_contents($logfile, $logEntry, FILE_APPEND | LOCK_EX);
+    echo "请求信息已记录到文件。";
+}
 ?>
